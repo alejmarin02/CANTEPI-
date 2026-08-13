@@ -1,4 +1,5 @@
 console.log("CANTEPI RPG: game.js conectado correctamente");
+
 const canvas = document.querySelector("#game canvas");
 const ctx = canvas.getContext("2d");
 
@@ -20,6 +21,7 @@ document.addEventListener("keyup", (event) => {
 });
 
 function update() {
+
     if (keys["ArrowUp"] || keys["w"] || keys["W"]) {
         player.y -= player.speed;
     }
@@ -36,20 +38,41 @@ function update() {
         player.x += player.speed;
     }
 
-    player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
-    player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
+    player.x = Math.max(
+        0,
+        Math.min(canvas.width - player.size, player.x)
+    );
+
+    player.y = Math.max(
+        0,
+        Math.min(canvas.height - player.size, player.y)
+    );
 }
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
     ctx.fillStyle = "#ffcc00";
-    ctx.fillRect(player.x, player.y, player.size, player.size);
+
+    ctx.fillRect(
+        player.x,
+        player.y,
+        player.size,
+        player.size
+    );
 }
 
 function gameLoop() {
+
     update();
     draw();
+
     requestAnimationFrame(gameLoop);
 }
 
