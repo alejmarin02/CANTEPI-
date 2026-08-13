@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 const player = {
     x: canvas.width / 2,
     y: canvas.height / 2,
-    size: 32,
+    size: 46,
     speed: 4,
     gender: "male"
 };
@@ -59,13 +59,13 @@ function draw() {
         canvas.height
     );
 
-    // 👤 CABEZA
+    // CABEZA
     ctx.beginPath();
 
     ctx.arc(
-        player.x + 16,
+        player.x + 23,
         player.y + 10,
-        8,
+        9,
         0,
         Math.PI * 2
     );
@@ -73,34 +73,73 @@ function draw() {
     ctx.fillStyle = "#f1c27d";
     ctx.fill();
 
-    // 👕 CUERPO
+    // CUERPO
     ctx.fillStyle =
         player.gender === "male"
             ? "#3498db"
             : "#e91e63";
 
     ctx.fillRect(
-        player.x + 8,
-        player.y + 18,
-        16,
+        player.x + 11,
+        player.y + 20,
+        24,
+        22
+    );
+
+    // BRAZO IZQUIERDO
+    ctx.fillRect(
+        player.x + 5,
+        player.y + 21,
+        6,
         18
     );
 
-    // 🦵 PIERNAS
+    // BRAZO DERECHO
+    ctx.fillRect(
+        player.x + 35,
+        player.y + 21,
+        6,
+        18
+    );
+
+    // PIERNA IZQUIERDA
     ctx.fillStyle = "#333";
 
     ctx.fillRect(
-        player.x + 8,
-        player.y + 36,
-        6,
-        10
+        player.x + 11,
+        player.y + 42,
+        8,
+        14
     );
 
+    // PIERNA DERECHA
     ctx.fillRect(
-        player.x + 18,
-        player.y + 36,
-        6,
-        10
+        player.x + 27,
+        player.y + 42,
+        8,
+        14
     );
 }
+
+document.querySelectorAll(".gender-button").forEach((button) => {
+
+    button.addEventListener("click", () => {
+
+        player.gender = button.dataset.gender;
+
+        console.log(
+            "Personaje seleccionado:",
+            player.gender
+        );
+    });
+});
+
+function gameLoop() {
+
+    update();
+    draw();
+
+    requestAnimationFrame(gameLoop);
+}
+
 gameLoop();
