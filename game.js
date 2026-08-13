@@ -7,7 +7,8 @@ const player = {
     x: canvas.width / 2,
     y: canvas.height / 2,
     size: 32,
-    speed: 4
+    speed: 4,
+    gender: "male"
 };
 
 const keys = {};
@@ -58,22 +59,60 @@ function draw() {
         canvas.height
     );
 
-    ctx.fillStyle = "#ffcc00";
+    // Cabeza
+    ctx.beginPath();
+    ctx.arc(
+        player.x + 16,
+        player.y + 10,
+        8,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle = "#f1c27d";
+    ctx.fill();
+
+    // Cuerpo
+    ctx.fillStyle =
+        player.gender === "male"
+            ? "#3498db"
+            : "#e91e63";
 
     ctx.fillRect(
-        player.x,
-        player.y,
-        player.size,
-        player.size
+        player.x + 8,
+        player.y + 18,
+        16,
+        18
+    );
+
+    // Piernas
+    ctx.fillStyle = "#333";
+
+    ctx.fillRect(
+        player.x + 8,
+        player.y + 36,
+        6,
+        10
+    );
+
+    ctx.fillRect(
+        player.x + 18,
+        player.y + 36,
+        6,
+        10
     );
 }
+document.querySelectorAll(".gender-button").forEach((button) => {
 
-function gameLoop() {
+    button.addEventListener("click", () => {
 
-    update();
-    draw();
+        player.gender = button.dataset.gender;
 
-    requestAnimationFrame(gameLoop);
-}
+        console.log(
+            "Personaje seleccionado:",
+            player.gender
+        );
+    });
 
+});
 gameLoop();
