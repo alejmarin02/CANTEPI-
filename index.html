@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        CANTEPI RPG — El Misterio del Cinturón
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+
+            margin: 0;
+
+            padding: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            overflow: hidden;
+
+            background: #111;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+        }
+
+        #game {
+
+            width: 100vw;
+
+            height: 100vh;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+        canvas {
+
+            display: block;
+
+        }
+
+        /* -------------------------
+           START SCREEN
+        ------------------------- */
+
+        #start-screen {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 100;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #080808,
+                    #201000
+                );
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: white;
+
+        }
+
+        .start-box {
+
+            width: min(
+                90vw,
+                500px
+            );
+
+            padding: 35px;
+
+            background: #111;
+
+            border: 2px solid #f5a623;
+
+            border-radius: 15px;
+
+            text-align: center;
+
+            box-shadow:
+                0 0 40px
+                rgba(
+                    245,
+                    166,
+                    35,
+                    .2
+                );
+
+        }
+
+        .logo {
+
+            font-size: 55px;
+
+            font-weight: 900;
+
+            letter-spacing: 8px;
+
+            color: #f5a623;
+
+        }
+
+        .subtitle {
+
+            color: #aaa;
+
+            margin-bottom: 30px;
+
+        }
+
+        #player-name {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border-radius: 8px;
+
+            border: 1px solid #555;
+
+            background: #222;
+
+            color: white;
+
+            font-size: 16px;
+
+            text-align: center;
+
+            margin-bottom: 20px;
+
+        }
+
+        .gender-container {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+
+        }
+
+        .gender-button {
+
+            flex: 1;
+
+            padding: 14px;
+
+            border: 1px solid #444;
+
+            border-radius: 8px;
+
+            background: #222;
+
+            color: white;
+
+            cursor: pointer;
+
+        }
+
+        .gender-button.selected {
+
+            background: #f5a623;
+
+            color: black;
+
+        }
+
+        #start-button {
+
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #f5a623;
+
+            color: #111;
+
+            font-weight: bold;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+        }
+
+        /* -------------------------
+           DIALOG
+        ------------------------- */
+
+        #dialog {
+
+            position: fixed;
+
+            left: 50%;
+
+            bottom: 25px;
+
+            transform:
+                translateX(-50%);
+
+            width: min(
+                92vw,
+                700px
+            );
+
+            padding: 20px;
+
+            background:
+                rgba(
+                    10,
+                    10,
+                    10,
+                    .96
+                );
+
+            border:
+                2px solid
+                #f5a623;
+
+            border-radius: 12px;
+
+            color: white;
+
+            z-index: 50;
+
+            display: none;
+
+        }
+
+        #dialog-name {
+
+            color: #f5a623;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+
+        }
+
+        #dialog-text {
+
+            line-height: 1.5;
+
+            margin-bottom: 15px;
+
+        }
+
+        #dialog-next {
+
+            background: #f5a623;
+
+            color: #111;
+
+            border: none;
+
+            padding:
+                10px 18px;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+        }
+
+        /* -------------------------
+           QUEST
+        ------------------------- */
+
+        #quest {
+
+            position: fixed;
+
+            top: 15px;
+
+            left: 15px;
+
+            width: 260px;
+
+            padding: 15px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .8
+                );
+
+            border-left:
+                4px solid
+                #f5a623;
+
+            color: white;
+
+            z-index: 20;
+
+            display: none;
+
+        }
+
+        #quest-title {
+
+            font-weight: bold;
+
+            margin-top: 6px;
+
+        }
+
+        #quest-description {
+
+            color: #bbb;
+
+            font-size: 13px;
+
+            margin-top: 6px;
+
+        }
+
+        /* -------------------------
+           MOBILE CONTROLS
+        ------------------------- */
+
+        #controls {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 40;
+
+        }
+
+        .dpad {
+
+            position: absolute;
+
+            bottom: 25px;
+
+            left: 25px;
+
+            width: 150px;
+
+            height: 150px;
+
+        }
+
+        .dpad button {
+
+            position: absolute;
+
+            width: 50px;
+
+            height: 50px;
+
+            background:
+                rgba(
+                    20,
+                    20,
+                    20,
+                    .8
+                );
+
+            border:
+                1px solid
+                #777;
+
+            color: white;
+
+            border-radius: 8px;
+
+            pointer-events: auto;
+
+        }
+
+        .up {
+
+            top: 0;
+
+            left: 50px;
+
+        }
+
+        .down {
+
+            bottom: 0;
+
+            left: 50px;
+
+        }
+
+        .left {
+
+            left: 0;
+
+            top: 50px;
+
+        }
+
+        .right {
+
+            right: 0;
+
+            top: 50px;
+
+        }
+
+        #action {
+
+            position: absolute;
+
+            right: 35px;
+
+            bottom: 50px;
+
+            width: 70px;
+
+            height: 70px;
+
+            border-radius: 50%;
+
+            background: #f5a623;
+
+            color: black;
+
+            border: none;
+
+            font-weight: bold;
+
+            pointer-events: auto;
+
+        }
+
+        @media (
+            max-width: 800px
+        ) {
+
+            #controls {
+
+                display: block;
+
+            }
+
+            .logo {
+
+                font-size: 42px;
+
+            }
+
+            .start-box {
+
+                padding: 25px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div id="game">
+
+    <!-- START SCREEN -->
+
+    <div id="start-screen">
+
+        <div class="start-box">
+
+            <div class="logo">
+                CANTEPI
+            </div>
+
+            <h2>
+                EL MISTERIO DEL CINTURÓN
+            </h2>
+
+            <p class="subtitle">
+
+                El campeonato desapareció.
+                <br>
+                Todos son sospechosos.
+
+            </p>
+
+            <input
+                id="player-name"
+                type="text"
+                placeholder="Tu nombre"
+                maxlength="20"
+            >
+
+            <div class="gender-container">
+
+                <button
+                    class="gender-button"
+                    data-gender="male"
+                >
+                    👨 Hombre
+                </button>
+
+                <button
+                    class="gender-button"
+                    data-gender="female"
+                >
+                    👩 Mujer
+                </button>
+
+            </div>
+
+            <button id="start-button">
+
+                ENTRAR AL CANTEPI
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUEST -->
+
+    <div id="quest">
+
+        <strong>
+            📜 MISIÓN
+        </strong>
+
+        <div id="quest-title">
+            El cinturón desaparecido
+        </div>
+
+        <div id="quest-description">
+            Investiga la Arena Cosmopolitan.
+        </div>
+
+    </div>
+
+
+    <!-- DIALOG -->
+
+    <div id="dialog">
+
+        <div id="dialog-name"></div>
+
+        <div id="dialog-text"></div>
+
+        <button id="dialog-next">
+            CONTINUAR
+        </button>
+
+    </div>
+
+
+    <!-- MOBILE CONTROLS -->
+
+    <div id="controls">
+
+        <div class="dpad">
+
+            <button
+                class="up"
+                data-direction="up"
+            >
+                ▲
+            </button>
+
+            <button
+                class="left"
+                data-direction="left"
+            >
+                ◀
+            </button>
+
+            <button
+                class="right"
+                data-direction="right"
+            >
+                ▶
+            </button>
+
+            <button
+                class="down"
+                data-direction="down"
+            >
+                ▼
+            </button>
+
+        </div>
+
+        <button id="action">
+            A
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+    =====================================
+    CANTEPI RPG
+    PROTOTYPE 0.1
+    =====================================
+    */
+
+    let player = {
+
+        name: "",
+
+        gender: "",
+
+        x: 600,
+
+        y: 400,
+
+        speed: 4
+
+    };
+
+
+    let selectedGender = null;
+
+
+    let keys = {
+
+        up: false,
+
+        down: false,
+
+        left: false,
+
+        right: false
+
+    };
+
+
+    /*
+    =====================================
+    GENDER
+    =====================================
+    */
+
+    document
+        .querySelectorAll(
+            ".gender-button"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        selectedGender =
+                            button.dataset.gender;
+
+                        document
+                            .querySelectorAll(
+                                ".gender-button"
+                            )
+                            .forEach(
+                                b =>
+                                    b.classList
+                                        .remove(
+                                            "selected"
+                                        )
+                            );
+
+                        button.classList
+                            .add(
+                                "selected"
+                            );
+
+                    }
+                );
+
+            }
+        );
+
+
+    /*
+    =====================================
+    START GAME
+    =====================================
+    */
+
+    document
+        .getElementById(
+            "start-button"
+        )
+        .addEventListener(
+            "click",
+            startGame
+        );
+
+
+    function startGame() {
+
+        const name =
+            document
+                .getElementById(
+                    "player-name"
+                )
+                .value
+                .trim();
+
+
+        if (!selectedGender) {
+
+            alert(
+                "Elige Hombre o Mujer."
+            );
+
+            return;
+
+        }
+
+
+        player.name =
+            name ||
+            "Cantepiano";
+
+
+        player.gender =
+            selectedGender;
+
+
+        document
+            .getElementById(
+                "start-screen"
+            )
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById(
+                "quest"
+            )
+            .style.display =
+            "block";
+
+
+        createGame();
+
+    }
+
+
+    /*
+    =====================================
+    CANVAS
+    =====================================
+    */
+
+    let canvas;
+
+    let ctx;
+
+
+    function createGame() {
+
+        canvas =
+            document.createElement(
+                "canvas"
+            );
+
+
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
+
+
+        document
+            .getElementById(
+                "game"
+            )
+            .appendChild(
+                canvas
+            );
+
+
+        ctx =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        window.addEventListener(
+            "resize",
+            resizeCanvas
+        );
+
+
+        setupKeyboard();
+
+        setupTouch();
+
+
+        showOpeningDialog();
+
+
+        requestAnimationFrame(
+            gameLoop
+        );
+
+    }
+
+
+    function resizeCanvas() {
+
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
+
+    }
+
+
+    /*
+    =====================================
+    KEYBOARD
+    =====================================
+    */
+
+    function setupKeyboard() {
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "ArrowUp" ||
+                    event.key.toLowerCase() === "w"
+                )
+                    keys.up = true;
+
+
+                if (
+                    event.key ===
+                    "ArrowDown" ||
+                    event.key.toLowerCase() === "s"
+                )
+                    keys.down = true;
+
+
+                if (
+                    event.key ===
+                    "ArrowLeft" ||
+                    event.key.toLowerCase() === "a"
+                )
+                    keys.left = true;
+
+
+                if (
+                    event.key ===
+                    "ArrowRight" ||
+                    event.key.toLowerCase() === "d"
+                )
+                    keys.right = true;
+
+
+                if (
+                    event.key.toLowerCase() ===
+                    "e"
+                )
+                    interact();
+
+            }
+        );
+
+
+        document.addEventListener(
+            "keyup",
+            event => {
+
+                if (
+                    event.key ===
+                    "ArrowUp" ||
+                    event.key.toLowerCase() === "w"
+                )
+                    keys.up = false;
+
+
+                if (
+                    event.key ===
+                    "ArrowDown" ||
+                    event.key.toLowerCase() === "s"
+                )
+                    keys.down = false;
+
+
+                if (
+                    event.key ===
+                    "ArrowLeft" ||
+                    event.key.toLowerCase() === "a"
+                )
+                    keys.left = false;
+
+
+                if (
+                    event.key ===
+                    "ArrowRight" ||
+                    event.key.toLowerCase() === "d"
+                )
+                    keys.right = false;
+
+            }
+        );
+
+    }
+
+
+    /*
+    =====================================
+    TOUCH
+    =====================================
+    */
+
+    function setupTouch() {
+
+        document
+            .querySelectorAll(
+                "[data-direction]"
+            )
+            .forEach(
+                button => {
+
+                    const direction =
+                        button.dataset.direction;
+
+
+                    button.addEventListener(
+                        "touchstart",
+                        event => {
+
+                            event.preventDefault();
+
+                            keys[
+                                direction
+                            ] = true;
+
+                        }
+                    );
+
+
+                    button.addEventListener(
+                        "touchend",
+                        event => {
+
+                            event.preventDefault();
+
+                            keys[
+                                direction
+                            ] = false;
+
+                        }
+                    );
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "action"
+            )
+            .addEventListener(
+                "touchstart",
+                event => {
+
+                    event.preventDefault();
+
+                    interact();
+
+                }
+            );
+
+    }
+
+
+    /*
+    =====================================
+    GAME LOOP
+    =====================================
+    */
+
+    function gameLoop() {
+
+        updatePlayer();
+
+        drawWorld();
+
+        requestAnimationFrame(
+            gameLoop
+        );
+
+    }
+
+
+    function updatePlayer() {
+
+        if (keys.up)
+            player.y -= player.speed;
+
+        if (keys.down)
+            player.y += player.speed;
+
+        if (keys.left)
+            player.x -= player.speed;
+
+        if (keys.right)
+            player.x += player.speed;
+
+
+        player.x =
+            Math.max(
+                25,
+                Math.min(
+                    canvas.width - 25,
+                    player.x
+                )
+            );
+
+
+        player.y =
+            Math.max(
+                25,
+                Math.min(
+                    canvas.height - 25,
+                    player.y
+                )
+            );
+
+    }
+
+
+    /*
+    =====================================
+    WORLD
+    =====================================
+    */
+
+    function drawWorld() {
+
+        ctx.fillStyle =
+            "#172015";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        /*
+        ROAD
+        */
+
+        ctx.fillStyle =
+            "#4c4c4c";
+
+        ctx.fillRect(
+            0,
+            canvas.height * .55,
+            canvas.width,
+            130
+        );
+
+
+        ctx.fillRect(
+            canvas.width * .35,
+            0,
+            130,
+            canvas.height
+        );
+
+
+        /*
+        ARENA
+        */
+
+        drawBuilding(
+            520,
+            120,
+            420,
+            230,
+            "#303030",
+            "ARENA COSMOPOLITAN"
+        );
+
+
+        /*
+        XING
+        */
+
+        drawBuilding(
+            40,
+            60,
+            220,
+            130,
+            "#6b3500",
+            "XING SPOT"
+        );
+
+
+        /*
+        FONDA
+        */
+
+        drawBuilding(
+            canvas.width - 270,
+            60,
+            220,
+            130,
+            "#71421f",
+            "FONDA CANTEPI"
+        );
+
+
+        /*
+        CUCA
+        */
+
+        drawBuilding(
+            canvas.width - 270,
+            canvas.height - 180,
+            220,
+            130,
+            "#303060",
+            "CUCA"
+        );
+
+
+        /*
+        GRUTA
+        */
+
+        drawBuilding(
+            40,
+            canvas.height - 180,
+            220,
+            130,
+            "#174b6b",
+            "GRUTA AZUL"
+        );
+
+
+        /*
+        PLAYER
+        */
+
+        ctx.fillStyle =
+            player.gender === "male"
+                ? "#4da6ff"
+                : "#ff66aa";
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            player.x,
+            player.y,
+            20,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+
+        ctx.fillStyle =
+            "#fff";
+
+        ctx.font =
+            "14px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillText(
+            player.name,
+            player.x,
+            player.y - 28
+        );
+
+
+        /*
+        JESUS
+        */
+
+        const jesusX =
+            canvas.width / 2;
+
+        const jesusY =
+            410;
+
+
+        ctx.fillStyle =
+            "#ffcc66";
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            jesusX,
+            jesusY,
+            20,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+
+        ctx.fillStyle =
+            "#fff";
+
+        ctx.fillText(
+            'Jesús "El Fotógrafo"',
+            jesusX,
+            jesusY - 28
+        );
+
+    }
+
+
+    function drawBuilding(
+        x,
+        y,
+        width,
+        height,
+        color,
+        name
+    ) {
+
+        ctx.fillStyle =
+            color;
+
+        ctx.fillRect(
+            x,
+            y,
+            width,
+            height
+        );
+
+
+        ctx.strokeStyle =
+            "#f5a623";
+
+        ctx.lineWidth =
+            2;
+
+        ctx.strokeRect(
+            x,
+            y,
+            width,
+            height
+        );
+
+
+        ctx.fillStyle =
+            "#fff";
+
+        ctx.font =
+            "bold 16px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillText(
+            name,
+            x + width / 2,
+            y + height / 2
+        );
+
+    }
+
+
+    /*
+    =====================================
+    INTERACTION
+    =====================================
+    */
+
+    function interact() {
+
+        const jesusX =
+            canvas.width / 2;
+
+        const jesusY =
+            410;
+
+
+        const distance =
+            Math.hypot(
+                player.x - jesusX,
+                player.y - jesusY
+            );
+
+
+        if (distance < 100) {
+
+            showJesusDialog();
+
+        }
+
+    }
+
+
+    /*
+    =====================================
+    DIALOG SYSTEM
+    =====================================
+    */
+
+    let dialogs = [];
+
+    let dialogIndex = 0;
+
+
+    function showDialog(
+        name,
+        text
+    ) {
+
+        document
+            .getElementById(
+                "dialog-name"
+            )
+            .textContent =
+            name;
+
+
+        document
+            .getElementById(
+                "dialog-text"
+            )
+            .textContent =
+            text;
+
+
+        document
+            .getElementById(
+                "dialog"
+            )
+            .style.display =
+            "block";
+
+    }
+
+
+    document
+        .getElementById(
+            "dialog-next"
+        )
+        .addEventListener(
+            "click",
+            nextDialog
+        );
+
+
+    function nextDialog() {
+
+        dialogIndex++;
+
+
+        if (
+            dialogIndex >=
+            dialogs.length
+        ) {
+
+            document
+                .getElementById(
+                    "dialog"
+                )
+                .style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        showDialog(
+            dialogs[
+                dialogIndex
+            ].name,
+
+            dialogs[
+                dialogIndex
+            ].text
+        );
+
+    }
+
+
+    function startDialog(
+        newDialogs
+    ) {
+
+        dialogs =
+            newDialogs;
+
+        dialogIndex = 0;
+
+
+        showDialog(
+            dialogs[0].name,
+            dialogs[0].text
+        );
+
+    }
+
+
+    /*
+    =====================================
+    OPENING
+    =====================================
+    */
+
+    function showOpeningDialog() {
+
+        startDialog([
+
+            {
+
+                name:
+                    "NARRADOR",
+
+                text:
+                    "Bienvenido al CANTEPI."
+
+            },
+
+            {
+
+                name:
+                    "NARRADOR",
+
+                text:
+                    "Anoche ocurrió algo que nadie quiere explicar."
+
+            },
+
+            {
+
+                name:
+                    "NARRADOR",
+
+                text:
+                    "El cinturón del CANTEPI desapareció."
+
+            },
+
+            {
+
+                name:
+                    "NARRADOR",
+
+                text:
+                    "La CUCA dice que fue un robo."
+
+            },
+
+            {
+
+                name:
+                    "NARRADOR",
+
+                text:
+                    "Los jugadores dicen que fue una conspiración."
+
+            },
+
+            {
+
+                name:
+                    "NARRADOR",
+
+                text:
+                    "Y tú vas a descubrir quién está mintiendo."
+
+            }
+
+        ]);
+
+    }
+
+
+    /*
+    =====================================
+    JESUS
+    =====================================
+    */
+
+    function showJesusDialog() {
+
+        startDialog([
+
+            {
+
+                name:
+                    'Jesús "El Fotógrafo"',
+
+                text:
+                    "¿Tú vienes por lo del cinturón?"
+
+            },
+
+            {
+
+                name:
+                    player.name,
+
+                text:
+                    "Sí. Quiero saber qué pasó."
+
+            },
+
+            {
+
+                name:
+                    'Jesús "El Fotógrafo"',
+
+                text:
+                    "Entonces escucha bien."
+
+            },
+
+            {
+
+                name:
+                    'Jesús "El Fotógrafo"',
+
+                text:
+                    "El cinturón estaba dentro de la Arena Cosmopolitan."
+
+            },
+
+            {
+
+                name:
+                    'Jesús "El Fotógrafo"',
+
+                text:
+                    "Cuando regresamos... había desaparecido."
+
+            },
+
+            {
+
+                name:
+                    'Jesús "El Fotógrafo"',
+
+                text:
+                    "Pero alguien dejó una pista."
+
+            },
+
+            {
+
+                name:
+                    'Jesús "El Fotógrafo"',
+
+                text:
+                    "Ve a investigar los alrededores."
+
+            }
+
+        ]);
+
+        document
+            .getElementById(
+                "quest-description"
+            )
+            .textContent =
+            "Investiga la Arena Cosmopolitan y encuentra una pista.";
+
+    }
+
+</script>
+
+</body>
+
+</html>
