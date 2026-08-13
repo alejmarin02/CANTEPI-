@@ -59,8 +59,9 @@ function draw() {
         canvas.height
     );
 
-    // Cabeza
+    // 👤 CABEZA
     ctx.beginPath();
+
     ctx.arc(
         player.x + 16,
         player.y + 10,
@@ -72,7 +73,7 @@ function draw() {
     ctx.fillStyle = "#f1c27d";
     ctx.fill();
 
-    // Cuerpo
+    // 👕 CUERPO
     ctx.fillStyle =
         player.gender === "male"
             ? "#3498db"
@@ -85,7 +86,7 @@ function draw() {
         18
     );
 
-    // Piernas
+    // 🦵 PIERNAS
     ctx.fillStyle = "#333";
 
     ctx.fillRect(
@@ -102,17 +103,4 @@ function draw() {
         10
     );
 }
-document.querySelectorAll(".gender-button").forEach((button) => {
-
-    button.addEventListener("click", () => {
-
-        player.gender = button.dataset.gender;
-
-        console.log(
-            "Personaje seleccionado:",
-            player.gender
-        );
-    });
-
-});
 gameLoop();
